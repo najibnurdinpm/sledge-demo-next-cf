@@ -9,19 +9,22 @@ import { Suspense } from "react";
 import MenuItem from "./menu-item";
 import MobileMenu from "./mobile-menu";
 
+interface NavigationItem {
+  title: string;
+  path: string;
+}
+
+const navigationItems: NavigationItem[] = []
+
+const updateLastItemPath = (items: NavigationItem[]): NavigationItem[] => {
+  return [
+    ...items.slice(0, -1),
+    { ...items[items.length - 1], path: '/page/happy-customers-page' }
+  ];
+};
+
 export default async function Navbar() {
-  const menu = await getMenu("main-menu");
-
-  let newMenu: any = [];
-
-  menu.map((items, index) => {
-    if (index === menu.length - 1) {
-      items.path = `/page/happy-customers-page`;
-      newMenu.push(items);
-    } else {
-      newMenu.push(items);
-    }
-  });
+  const menu = await updateLastItemPath(await getMenu("main-menu"));
 
   return (
     <header className="bg-dark">
@@ -35,7 +38,7 @@ export default async function Navbar() {
           </Link>
         </div>
         <div className="hidden lg:flex lg:gap-x-[32px]">
-          {newMenu.map((item: Menu) => {
+          {menu.map((item: Menu) => {
             return <MenuItem item={item} />;
           })}
         </div>
